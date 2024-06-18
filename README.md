@@ -2,10 +2,7 @@
 Extremely minimalistic intro screen for Neovim. This fork of [eoh-bse's minintro](https://github.com/eoh-bse/minintro.nvim/) allows for a multi-colored title screen.
 
 ## Motivation
-Neovim intro screen can be extremely buggy and forced to close automatically by plugins installed such as 
-[bufferline](https://github.com/akinsho/bufferline.nvim), 
-[lualine](https://github.com/nvim-lualine/lualine.nvim) and many more.  
-`minintro.nvim` hijects `no-name` and `directory` buffer and draws a simple intro logo.
+`minintro.nvim` hijacks the `no-name` buffer and draws a simple intro logo.
 If you just want a simple and lightweight startup intro that works, this plugin is for you.
 
 ## Screenshot
@@ -59,20 +56,6 @@ use {
     end}
 }
 ```
-
-## Things to be aware of
-If you have some sort of `tabline` plugin such as [bufferline](https://github.com/akinsho/bufferline.nvim),
-`vim.opt.showtabline` will be overridden to `1`. This forces display of a buffer tab even when there is only
-one. If you do not wanna see the tab, you can modify `bufferline`'s configuration like the following:
-```lua
-require("bufferline").setup({
-    options = {
-        always_show_bufferline = false
-    }
-})
-```
-The above configuration will effectively set `vim.opt.showtabline` to 2, meaning the tabs will only start to
-display when there is more than one buffer open
 
 ## Reference Configuration
 If you want to see a neovim configuration using this plugin, please refer to [this
