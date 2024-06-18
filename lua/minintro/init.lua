@@ -118,12 +118,12 @@ local function display_minintro(payload)
   minintro_buff = create_and_set_minintro_buf(default_buff)
   set_options()
 
-  draw_minintro(minintro_buff, INTRO_LOGO_WIDTH, INTRO_LOGO_HEIGHT)
+  draw_minintro(minintro_buff, INTRO_LOGO_WIDTH, INTRO_LOGO_HEIGHT, payload.colors)
 
   vim.api.nvim_create_autocmd({ "WinResized", "VimResized" }, {
     group = autocmd_group,
     buffer = minintro_buff,
-    callback = redraw
+    callback = function() redraw(payload.colors) end
   })
 end
 
@@ -145,3 +145,4 @@ end
 return {
   setup = setup
 }
+
