@@ -80,7 +80,16 @@ local function create_and_set_minintro_buf(default_buff)
   local bufnr = vim.api.nvim_get_current_buf()
   local bufname = vim.api.nvim_buf_get_name(bufnr)
   if bufname ~= "" then
-    return -1
+    local winid = 0
+    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+      local cbuf = vim.api.nvim_win_get_buf(win)
+      local cbufname = vim.api.nvim_buf_get_name(cbuf)
+      if cbufname == "" then
+        winid = win
+        break
+      end
+    end
+    vim.api.nvim_set_current_win(winid)
   end
   local intro_buff = vim.api.nvim_create_buf(false, true)
   vim.api.nvim_buf_set_name(intro_buff, PLUGIN_NAME)
@@ -102,11 +111,11 @@ local function create_and_set_minintro_buf(default_buff)
 end
 
 local function set_options()
-  vim.opt_local.number = false           -- disable line numbers
-  vim.opt_local.relativenumber = false   -- disable relative line numbers
-  vim.opt_local.list = false             -- disable displaying whitespace
+  vim.opt_local.number = false            -- disable line numbers
+  vim.opt_local.relativenumber = false    -- disable relative line numbers
+  vim.opt_local.list = false              -- disable displaying whitespace
   vim.opt_local.fillchars = { eob = ' ' } -- do not display "~" on each new line
-  vim.opt_local.colorcolumn = "0"        -- disable colorcolumn
+  vim.opt_local.colorcolumn = "0"         -- disable colorcolumn
 end
 
 local function redraw(colors)
@@ -169,4 +178,3 @@ end
 return {
   setup = setup
 }
-
