@@ -77,6 +77,11 @@ local function draw_minintro(buf, logo_width, logo_height, colors)
 end
 
 local function create_and_set_minintro_buf(default_buff)
+  local bufnr = vim.api.nvim_get_current_buf()
+  local bufname = vim.api.nvim_buf_get_name(bufnr)
+  if bufname ~= "" then
+    return -1
+  end
   local intro_buff = vim.api.nvim_create_buf(false, true)
   vim.api.nvim_buf_set_name(intro_buff, PLUGIN_NAME)
   vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = intro_buff })
@@ -85,7 +90,13 @@ local function create_and_set_minintro_buf(default_buff)
   vim.api.nvim_set_option_value("swapfile", false, { buf = intro_buff })
 
   vim.api.nvim_set_current_buf(intro_buff)
-  vim.api.nvim_buf_delete(default_buff, { force = true })
+  local status, result = pcall(function()
+    vim.api.nvim_buf_delete(default_buff, { force = true })
+  end)
+  if not status then
+    print('Error deleting buf: ' .. result)
+    return -1
+  end
 
   return intro_buff
 end
@@ -116,6 +127,9 @@ local function display_minintro(payload)
   end
 
   minintro_buff = create_and_set_minintro_buf(default_buff)
+  if minintro_buff == -1 then
+    return
+  end
   set_options()
 
   draw_minintro(minintro_buff, INTRO_LOGO_WIDTH, INTRO_LOGO_HEIGHT, payload.colors)
@@ -135,8 +149,14 @@ local function setup(options)
   options = options or {}
   local colors = options.colors or DEFAULT_COLORS
 
-  for i, color in ipairs(colors) do
-    vim.api.nvim_set_hl(0, "LineColor" .. i, { fg = color })
+  local status, result = pcall(function()
+    for i, color in ipairs(colors) do
+      vim.api.nvim_set_hl(0, "LineColor" .. i, { fg = color })
+    end
+  end)
+  if not status then
+    print('Minitro.nvim error: ' .. result)
+    return
   end
 
   vim.api.nvim_create_autocmd("VimEnter", {
