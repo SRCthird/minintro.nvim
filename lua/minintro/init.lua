@@ -73,7 +73,7 @@ local function draw_minintro(buf, logo_width, logo_height)
 end
 
 local function create_and_set_minintro_buf(default_buff)
-	local intro_buff = vim.api.nvim_create_buf("nobuflisted", "unlisted")
+  local intro_buff = vim.api.nvim_create_buf(false, true)
 	vim.api.nvim_buf_set_name(intro_buff, PLUGIN_NAME)
 	vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = intro_buff })
 	vim.api.nvim_set_option_value("buftype", "nofile", { buf = intro_buff })
