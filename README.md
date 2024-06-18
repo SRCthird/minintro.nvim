@@ -1,9 +1,8 @@
 # minintro.nvim
-Extremely minimalistic intro screen for Neovim
+Extremely minimalistic intro screen for Neovim. This fork of [eoh-bse's minintro](https://github.com/eoh-bse/minintro.nvim/) allows for a multi-colored title screen.
 
 ## Motivation
 Neovim intro screen can be extremely buggy and forced to close automatically by plugins installed such as 
-[nvim-tree](https://github.com/nvim-tree/nvim-tree.lua), 
 [bufferline](https://github.com/akinsho/bufferline.nvim), 
 [lualine](https://github.com/nvim-lualine/lualine.nvim) and many more.  
 `minintro.nvim` hijects `no-name` and `directory` buffer and draws a simple intro logo.
@@ -16,7 +15,7 @@ If you just want a simple and lightweight startup intro that works, this plugin 
 ```lua
 -- Lazy
 {
-    "eoh-bse/minintro.nvim",
+    "SRCthird/minintro.nvim",
     config = true,
     lazy = false
 }
@@ -25,19 +24,23 @@ If you just want a simple and lightweight startup intro that works, this plugin 
 ```lua
 -- Packer
 use {
-    "eoh-bse/minintro.nvim",
-    config = function() require("minintro").setup() end
+    "SRCthird/minintro.nvim",
+    config = {function() 
+        require("minintro").setup() 
+    end}
 }
 ```
 
 ## Configuration
-There is only one option available for `minintro.nvim` and that is color of the intro logo. There is no need
-to create a separate config file. Pass the config directly in your plugin installation file
+There is only one option available for `minintro.nvim` and that is colors of the intro logo. There is no need
+to create a separate config file. Pass the config directly in your plugin installation file. You can choose as many colors as you'd like.
 ```lua
 -- Lazy
 {
-    "eoh-bse/minintro.nvim",
-    opts = { color = "#98c379" }
+    "SRCthird/minintro.nvim",
+    opts = { colors = {
+        "#98c379"
+    }}
     config = true,
     lazy = false
 }
@@ -46,8 +49,14 @@ to create a separate config file. Pass the config directly in your plugin instal
 ```lua
 -- Packer
 use {
-    "eoh-bse/minintro.nvim",
-    config = function() require("minintro").setup({ color = "#98c379" }) end
+    "SRCthird/minintro.nvim",
+    config = {function()
+        require("minintro").setup({ 
+            colors = {
+                "#f72585", "#b5179e", "#560bad"  
+            }
+        }) 
+    end}
 }
 ```
 
@@ -66,5 +75,5 @@ The above configuration will effectively set `vim.opt.showtabline` to 2, meaning
 display when there is more than one buffer open
 
 ## Reference Configuration
-If you want to see a reference neovim configuration, please refer to [this
-nvim-setup](https://github.com/eoh-bse/nvim-setup)
+If you want to see a neovim configuration using this plugin, please refer to [this
+nvim setup](https://github.com/SRCthird/nvim)
