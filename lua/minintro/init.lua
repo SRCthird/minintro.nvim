@@ -76,21 +76,7 @@ local function draw_minintro(buf, logo_width, logo_height, colors)
   end
 end
 
-local function create_and_set_minintro_buf(default_buff)
-  local bufnr = vim.api.nvim_get_current_buf()
-  local bufname = vim.api.nvim_buf_get_name(bufnr)
-  if bufname ~= "" then
-    local winid = 0
-    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-      local cbuf = vim.api.nvim_win_get_buf(win)
-      local cbufname = vim.api.nvim_buf_get_name(cbuf)
-      if cbufname == "" then
-        winid = win
-        break
-      end
-    end
-    vim.api.nvim_set_current_win(winid)
-  end
+local function create_and_set_minintro_buf()
   local intro_buff = vim.api.nvim_create_buf(false, true)
   vim.api.nvim_buf_set_name(intro_buff, PLUGIN_NAME)
   vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = intro_buff })
@@ -99,13 +85,6 @@ local function create_and_set_minintro_buf(default_buff)
   vim.api.nvim_set_option_value("swapfile", false, { buf = intro_buff })
 
   vim.api.nvim_set_current_buf(intro_buff)
-  local status, result = pcall(function()
-    vim.api.nvim_buf_delete(default_buff, { force = true })
-  end)
-  if not status then
-    print('Error deleting buf: ' .. result)
-    return -1
-  end
 
   return intro_buff
 end
@@ -126,19 +105,25 @@ local function redraw(colors)
 end
 
 local function display_minintro(payload)
-  local is_dir = vim.fn.isdirectory(payload.file) == 1
-
   local default_buff = vim.api.nvim_get_current_buf()
   local default_buff_name = vim.api.nvim_buf_get_name(default_buff)
-  local default_buff_filetype = vim.api.nvim_get_option_value("filetype", { buf = default_buff })
-  if not is_dir and default_buff_name ~= "" and default_buff_filetype ~= PLUGIN_NAME then
-    return
+  if default_buff_name ~= "" then
+    local winid = -1
+    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+      local cbuf = vim.api.nvim_win_get_buf(win)
+      local cbufname = vim.api.nvim_buf_get_name(cbuf)
+      if cbufname == "" then
+        winid = win
+        break
+      end
+    end
+    if winid == -1 then
+      return
+    end
+    vim.api.nvim_set_current_win(winid)
   end
 
-  minintro_buff = create_and_set_minintro_buf(default_buff)
-  if minintro_buff == -1 then
-    return
-  end
+  minintro_buff = create_and_set_minintro_buf()
   set_options()
 
   draw_minintro(minintro_buff, INTRO_LOGO_WIDTH, INTRO_LOGO_HEIGHT, payload.colors)
@@ -151,10 +136,6 @@ local function display_minintro(payload)
 end
 
 local function setup(options)
-  if vim.fn.argc() > 0 then
-    return
-  end
-
   options = options or {}
   local colors = options.colors or DEFAULT_COLORS
 
