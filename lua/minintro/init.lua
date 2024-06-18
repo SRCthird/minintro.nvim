@@ -128,6 +128,10 @@ local function display_minintro(payload)
 end
 
 local function setup(options)
+  if vim.fn.argc() > 0 then
+    return
+  end
+
   options = options or {}
   local colors = options.colors or DEFAULT_COLORS
 
