@@ -24,7 +24,10 @@ local intro_logo = {
 }
 
 local PLUGIN_NAME = "minintro"
-local DEFAULT_COLOR = "#98c379"
+local DEFAULT_COLORS = {
+  "#fb6f92", "#ff8fab", "#ffb3c6", "#ffc2d1", "#ffe5ec",
+  "#ffe5ec", "#ffc2d1", "#ffb3c6", "#ff8fab", "#fb6f92",
+}
 local INTRO_LOGO_HEIGHT = #intro_logo
 local INTRO_LOGO_WIDTH = 55
 
@@ -40,7 +43,7 @@ local function lock_buf(buf)
 	vim.api.nvim_set_option_value("modifiable", false, { buf = buf })
 end
 
-local function draw_minintro(buf, logo_width, logo_height)
+local function draw_minintro(buf, logo_width, logo_height, colors)
 	local window = vim.fn.bufwinid(buf)
 	local screen_width = vim.api.nvim_win_get_width(window)
 	local screen_height = vim.api.nvim_win_get_height(window) - vim.opt.cmdheight:get()
@@ -66,10 +69,11 @@ local function draw_minintro(buf, logo_width, logo_height)
 	vim.api.nvim_buf_set_lines(buf, start_row, start_row, true, adjusted_logo)
 	lock_buf(buf)
 
-	vim.api.nvim_buf_set_extmark(buf, highlight_ns_id, start_row, start_col, {
-		end_row = start_row + INTRO_LOGO_HEIGHT,
-		hl_group = "Default"
-	})
+  for i, _ in ipairs(adjusted_logo) do
+    local hl_group = "LineColor" .. ((i - 1) % #colors + 1)
+    vim.api.nvim_buf_add_highlight(buf, highlight_ns_id, hl_group, start_row + i - 1, start_col,
+      start_col + #adjusted_logo[i])
+  end
 end
 
 local function create_and_set_minintro_buf(default_buff)
@@ -94,11 +98,11 @@ local function set_options()
 	vim.opt_local.colorcolumn = "0"      -- disable colorcolumn
 end
 
-local function redraw()
+local function redraw(colors)
 	unlock_buf(minintro_buff)
 	vim.api.nvim_buf_set_lines(minintro_buff, 0, -1, true, {})
 	lock_buf(minintro_buff)
-	draw_minintro(minintro_buff, INTRO_LOGO_WIDTH, INTRO_LOGO_HEIGHT)
+	draw_minintro(minintro_buff, INTRO_LOGO_WIDTH, INTRO_LOGO_HEIGHT, colors)
 end
 
 local function display_minintro(payload)
@@ -125,14 +129,17 @@ end
 
 local function setup(options)
 	options = options or {}
-	vim.api.nvim_set_hl(highlight_ns_id, "Default", { fg = options.color or DEFAULT_COLOR })
-	vim.api.nvim_set_hl_ns(highlight_ns_id)
+  local colors = options.colors or DEFAULT_COLORS
 
-	vim.api.nvim_create_autocmd("VimEnter", {
-		group = autocmd_group,
-		callback = display_minintro,
-		once = true
-	})
+  for i, color in ipairs(colors) do
+    vim.api.nvim_set_hl(0, "LineColor" .. i, { fg = color })
+  end
+
+  vim.api.nvim_create_autocmd("VimEnter", {
+    group = autocmd_group,
+    callback = function() display_minintro({ file = vim.fn.getcwd(), colors = colors }) end,
+    once = true
+  })
 end
 
 return {
