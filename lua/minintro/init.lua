@@ -104,7 +104,7 @@ local function redraw(colors)
   draw_minintro(minintro_buff, INTRO_LOGO_WIDTH, INTRO_LOGO_HEIGHT, colors)
 end
 
-local function display_minintro(payload)
+local function display_minintro(colors)
   local default_buff = vim.api.nvim_get_current_buf()
   local default_buff_name = vim.api.nvim_buf_get_name(default_buff)
   if default_buff_name ~= "" then
@@ -126,12 +126,12 @@ local function display_minintro(payload)
   minintro_buff = create_and_set_minintro_buf()
   set_options()
 
-  draw_minintro(minintro_buff, INTRO_LOGO_WIDTH, INTRO_LOGO_HEIGHT, payload.colors)
+  draw_minintro(minintro_buff, INTRO_LOGO_WIDTH, INTRO_LOGO_HEIGHT, colors)
 
   vim.api.nvim_create_autocmd({ "WinResized", "VimResized" }, {
     group = autocmd_group,
     buffer = minintro_buff,
-    callback = function() redraw(payload.colors) end
+    callback = function() redraw(colors) end
   })
 end
 
@@ -151,7 +151,7 @@ local function setup(options)
 
   vim.api.nvim_create_autocmd("VimEnter", {
     group = autocmd_group,
-    callback = function() display_minintro({ file = vim.fn.getcwd(), colors = colors }) end,
+    callback = function() display_minintro(colors) end,
     once = true
   })
 end
