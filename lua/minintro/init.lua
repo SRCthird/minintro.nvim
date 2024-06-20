@@ -1,28 +1,4 @@
 -- Fork of https://github.com/eoh-bse/minintro.nvim
-local version = vim.version()
-
-local intro_logo = {
-  " ███╗   ██╗ ███████╗ ██████╗  ██╗   ██╗ ██╗ ███╗   ███╗",
-  " ████╗  ██║ ██╔════╝██╔═══██╗ ██║   ██║ ██║ ████╗ ████║",
-  " ██╔██╗ ██║ █████╗  ██║   ██║ ██║   ██║ ██║ ██╔████╔██║",
-  " ██║╚██╗██║ ██╔══╝  ██║   ██║ ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║",
-  " ██║ ╚████║ ███████╗╚██████╔╝  ╚████╔╝  ██║ ██║ ╚═╝ ██║",
-  " ╚═╝  ╚═══╝ ╚══════╝ ╚═════╝    ╚═══╝   ╚═╝ ╚═╝     ╚═╝",
-  "",
-  "                     Version: " .. version.major .. "." .. version.minor .. "." .. version.patch,
-  "",
-  "     Nvim is open source and freely distributable",
-  "              https://neovim.io/#chat",
-  "",
-  "     type  :help nvim<Enter>       if you are new!",
-  "     type  :checkhealth<Enter>     to optimize Nvim",
-  "     type  :q<Enter>               to exit",
-  "     type  :help<Enter>            for help",
-  "",
-  "            Help poor children in Uganda!",
-  "     type  :help iccf<Enter>       for information",
-}
-
 local PLUGIN_NAME = "minintro"
 local DEFAULT_COLORS = {
   "#fb6f92", "#ff8fab", "#ffb3c6", "#ffc2d1", "#ffe5ec",
@@ -138,6 +114,7 @@ end
 local function setup(options)
   options = options or {}
   local colors = options.colors or DEFAULT_COLORS
+  local intro_logo = require('minintro.graphics').setup(options)
 
   local status, result = pcall(function()
     for i, color in ipairs(colors) do
