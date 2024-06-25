@@ -29,15 +29,17 @@ use {
 ```
 
 ## Configuration
-There is only one option available for `minintro.nvim` and that is colors of the intro logo. There is no need
+There is only a few option available for `minintro.nvim` and all of which are optional. `colors` is the array of colors for the intro logo. 
+`title`, `version` and `info` are all string arrays that replace their respective sections of the screen. There is no need
 to create a separate config file. Pass the config directly in your plugin installation file. You can choose as many colors as you'd like.
 ```lua
 -- Lazy
 {
     "SRCthird/minintro.nvim",
-    opts = { colors = {
-        "#98c379"
-    }}
+    opts = { 
+        title = { "   Neovim   "},
+        colors = { "#98c379" }
+    }
     config = true,
     lazy = false
 }
@@ -49,9 +51,12 @@ use {
     "SRCthird/minintro.nvim",
     config = {function()
         require("minintro").setup({ 
-            colors = {
-                "#f72585", "#b5179e", "#560bad"  
-            }
+            version = { 
+                "",
+                "v0.10.0",
+                ""
+            },
+            colors = { "#f72585", "#b5179e", "#560bad"  }
         }) 
     end}
 }
