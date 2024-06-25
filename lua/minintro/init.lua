@@ -21,7 +21,7 @@ local function setup(options)
   end
 
   local draw = require('minintro.draw').draw(
-    PLUGIN_NAME, intro_logo, 55, #intro_logo
+    PLUGIN_NAME, intro_logo
   )
 
   vim.api.nvim_create_autocmd("VimEnter", {
